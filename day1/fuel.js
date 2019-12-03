@@ -1,19 +1,25 @@
-const fs = require("fs");
+const part1 = (data) => {
+	const modules = data.split("\n").filter((module) => module);
+	const fuelRequired = modules.reduce((total, module) => total + fuelForMass(Number(module)), 0);
+	return fuelRequired;
+}
 
-fs.readFile("./data.txt", "utf8", (err, data) => {
-	if (err) {
-		console.log("Error in file");
-		process.exit(1);
-	}
+const part2 = (data) => {
 	const modules = data.split("\n").filter((module) => module);
 	const fuelRequired = modules.reduce((total, module) => total + fuelForModule(Number(module)), 0);
-	console.log(fuelRequired);
-});
+	return fuelRequired;
+}
 
+module.exports = {
+	part1, part2
+}
+
+const fuelForMass = (module) => {
+	return Math.floor(module / 3) - 2
+};
 
 const fuelForModule = (module) => {
-	const fuelForMass = Math.floor(module / 3) - 2;
-	let massStillRequiringFuel = fuelForMass;
+	let massStillRequiringFuel = fuelForMass(module);
 	let fuelForFuel = 0;
         while (massStillRequiringFuel > 0) {
                 const fuelToAdd = Math.floor(massStillRequiringFuel / 3) - 2;
@@ -22,6 +28,5 @@ const fuelForModule = (module) => {
                         fuelForFuel += massStillRequiringFuel;
                 }
         }
-	return fuelForMass + fuelForFuel;
+	return fuelForMass(module) + fuelForFuel;
 };
-

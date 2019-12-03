@@ -39,13 +39,8 @@ const crosses = [];
 
 const total = (cross) => cross.split(",").reduce((total, current) => total + Math.abs(Number(current)*1), 0);
 
-fs.readFile("./data.txt", "utf8", (err, data) => {
-        if (err) {
-                console.log("Error in file");
-                process.exit(1);
-        }
-        const lines = data.split("\n").filter((line) => line);
-	console.log(lines);
+module.exports = (data) => {
+	const lines = data.split("\n").filter((line) => line);
 	lines.forEach((line, index) => {
 		let currentLocation = new Coordinate(0, 0);
 		line.split(",").forEach((action) => {
@@ -75,7 +70,6 @@ fs.readFile("./data.txt", "utf8", (err, data) => {
 			}
 		});
 	});
-	console.log(crosses);
 	let closest;
 	crosses.forEach((cross) => {
 		const currentTotal = total(cross)
@@ -87,5 +81,5 @@ fs.readFile("./data.txt", "utf8", (err, data) => {
 			}
 		}
 	});
-	console.log(closest);
-});
+	return closest;
+};
