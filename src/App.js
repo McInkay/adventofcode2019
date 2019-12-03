@@ -9,9 +9,11 @@ import {
 
 import './App.css';
 
+const baseName = process.env.NODE_ENV === "production" ? "/adventofcode2019" : undefined; 
+
 export default function App() {
   return (
-    <Router>
+    <Router basename={baseName}>
       <div className="App">
         <header>
           <p> <Link to="/">Al's Advent of Code </Link> </p>
