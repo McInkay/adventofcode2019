@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   HashRouter as Router,
   Switch,
@@ -54,9 +54,18 @@ function DayWrapper() {
 
 function Day({day}) {
   let [data, setData] = useState("");
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch(day.data);
+      console.log(res);
+      const text = await res.text();
+      setData(text);
+    }
+    fetchData();
+  }, [day.data]);
   return (
     <div className="day">
-      <textarea className="data-input" placeholder="Data" value={data} onChange={({target: {value}}) => setData(value)}></textarea>
+      <textarea className="data-input" placeholder="Loading Data..." value={data} onChange={({target: {value}}) => setData(value)}></textarea>
       <div className="output-1">Part 1: {data ? day.part1(data) : "Missing input data"}</div>
       <div className="output-2">Part 2: {data ? (day.part2 ? day.part2(data) : "No part 2 code") : "Missing input data"}</div>
     </div>
