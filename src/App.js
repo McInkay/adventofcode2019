@@ -44,7 +44,7 @@ function DayWrapper() {
   }
   return (
     <div className="day-wrapper">
-      {day ? (<h2>Day: {dayNumber} ({day.name})</h2>) : (<h2>Day {dayNumber} not implemented yet</h2>)}
+      {day ? (<h2>Day: {dayNumber} ({day.name}) - <a href={`https://github.com/McInkay/adventofcode2019/tree/master/day${dayNumber}`}>source</a></h2>) : (<h2>Day {dayNumber} not implemented yet</h2>)}
       {day && <Day day={day} />}
     </div>
   )

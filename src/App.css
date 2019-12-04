@@ -1,6 +1,5 @@
 a {
   color: inherit;
-  text-decoration: none;
 }
 
 .App {
@@ -19,6 +18,11 @@ header {
   padding-right: 20px;
   height: 10vh;
 }
+
+header a {
+  text-decoration: none;
+}
+
 .App-link {
   color: #09d3ac;
 }
