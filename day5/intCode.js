@@ -44,9 +44,56 @@ const input = (ints, inputs, _, __, index) => {
 	return index + 1;
 };
 
-const output = (ints, _, outputs, __, index) => {
+const output = (ints, _, outputs, paramModes, index) => {
 	const readIndex = Number(ints[++index]);
-	outputs.push(ints[readIndex]);
+	const toOutput = paramModes[0] === 0 ? ints[readIndex] : readIndex;
+	outputs.push(toOutput);
+	return index + 1;
+}
+
+const jumpTrue = (ints, inputs, outputs, paramModes, index) => {
+	const checker = Number(ints[++index]);
+	const shouldJump = paramModes[0] === 0 ? Number(ints[checker]) !== 0 : checker !== 0;
+	if (shouldJump) {
+		const newIndexIndex = Number(ints[++index]);
+		const newIndex = paramModes[1] === 0 ? Number(ints[newIndexIndex]) : newIndexIndex;
+		return newIndex;
+	}
+	
+	return index + 2;
+}
+
+const jumpFalse = (ints, inputs, outputs, paramModes, index) => {
+	const checker = Number(ints[++index]);
+	const shouldJump = paramModes[0] === 0 ? Number(ints[checker]) === 0 : checker === 0;
+	if (shouldJump) {
+		const newIndexIndex = Number(ints[++index]);
+		const newIndex = paramModes[1] === 0 ? Number(ints[newIndexIndex]) : newIndexIndex;
+		return newIndex;
+	}
+	
+	return index + 2;
+}
+
+const lessThan = (ints, inputs, outputs, paramModes, index) => {
+	const firstIndex = Number(ints[++index]);
+	const secondIndex = Number(ints[++index]);
+	const first = paramModes[0] === 0 ? Number(ints[firstIndex]) : firstIndex;
+	const second = paramModes[1] === 0 ? Number(ints[secondIndex]) : secondIndex;
+	const location = Number(ints[++index]);
+	const toStore = first < second ? 1 : 0;
+	ints[location] = toStore;
+	return index + 1;
+}
+
+const equals = (ints, inputs, outputs, paramModes, index) => {
+	const firstIndex = Number(ints[++index]);
+	const secondIndex = Number(ints[++index]);
+	const first = paramModes[0] === 0 ? Number(ints[firstIndex]) : firstIndex;
+	const second = paramModes[1] === 0 ? Number(ints[secondIndex]) : secondIndex;
+	const location = Number(ints[++index]);
+	const toStore = first === second ? 1 : 0;
+	ints[location] = toStore;
 	return index + 1;
 }
 
@@ -55,6 +102,10 @@ const commands = {
 	2: multiply,
 	3: input,
 	4: output,
+	5: jumpTrue,
+	6: jumpFalse,
+	7: lessThan,
+	8: equals,
 }
 
 const getCommand = (commandString) => {
