@@ -81,6 +81,30 @@ export class Tree {
         return contains;
     }
 
+    distanceBetween(val1, val2) {
+        function distanceToXY(node, xVal, yVal) {
+            let x = null, y = null;
+            if (node.value === xVal) {
+                x = 0;
+            }
+            if (node.value === yVal) {
+                y = 0;
+            }
+            node.children.forEach((child) => {
+                const [childx, childy] = distanceToXY(child, xVal, yVal);
+                if (childx !== null) {
+                    x = childy !== null ? childx : childx + 1;
+                }
+                if (childy !== null) {
+                    y = childx !== null ? childy : childy + 1;
+                }
+            });
+            return [x, y];
+        }
+        const [x, y] = distanceToXY(this._root, val1, val2);
+        return x + y - 2;
+    }
+
     replaceNode(newNode) {
         let added = false;
         this.traverse((node) => {
@@ -92,4 +116,45 @@ export class Tree {
         return added;
     }
   
-  }
+}
+
+export const getTreeOfOrbits = (orbits) => {
+	const trees = [new Tree()];
+	orbits.forEach((orbit, idx) => {
+        if (idx % 100 === 0) {
+		    console.log(idx);
+        }
+		const [orbitee, moon] = orbit.split(")");
+		let index = 0;
+		let added = false;
+		while(!added) {
+			const tree = trees[index] || new Tree();
+			if (!trees[index]) {
+				trees.push(tree);
+			}
+			if (!tree._root) {
+				tree.setRootNode(orbitee);
+				added = true;
+			}
+			if (tree._root.value === moon) {
+				tree.setRootNode(orbitee);
+				added = true;
+			} else {
+				added = tree.addNode(moon, orbitee);
+			}
+			index++;
+		}
+		for(let i = trees.length - 1; i >= 0; i--) {
+			const tree = trees[i];
+			trees.some((otherTree) => {
+				if (otherTree && tree !== otherTree && otherTree.contains(tree._root.value)) {
+					otherTree.replaceNode(tree._root);
+					trees.splice(i, 1);
+					return true;
+				}
+			});
+		}
+    });
+    console.log(trees.length);
+    return trees[0];
+}
