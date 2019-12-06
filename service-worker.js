@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/adventofcode2019/precache-manifest.2d6c50eb0e9406486c9f545d8c9746d3.js"
+  "/adventofcode2019/precache-manifest.6c19197366e2d2281d8e2d84eae4653e.js"
 );
 
 self.addEventListener('message', (event) => {
