@@ -1,5 +1,4 @@
 module.exports = (data) => {
-	console.log(data.length);
 	const width = 25;
 	const height = 6;
 
@@ -18,7 +17,6 @@ module.exports = (data) => {
 		if (zeros < leastZeros[0]) {
 			leastZeros[0] = zeros;
 			leastZeros[1] = layer;
-			console.log(leastZeros);
 		}
 	}
 
