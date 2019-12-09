@@ -41,3 +41,7 @@ header a {
 .day .data-input {
   grid-row: span 2;
 }
+
+.output-2, .output-1 {
+  font-family: monospace;
+}

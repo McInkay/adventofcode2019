@@ -64,8 +64,20 @@ function Day({day}) {
   return (
     <div className="day">
       <textarea className="data-input" placeholder="Loading Data..." value={data} onChange={({target: {value}}) => setData(value)}></textarea>
-      <div className="output-1">Part 1: {data ? day.part1(data) : "Missing input data"}</div>
-      <div className="output-2">Part 2: {data ? (day.part2 ? day.part2(data) : "No part 2 code") : "Missing input data"}</div>
+      <div className="output-1">Part 1: <br />{data ? String(day.part1(data)).split("\n").map((item, key) => (
+            <span key={key}>
+              {item}
+              <br/>
+            </span>
+          )
+        ) : "Missing input data"}</div>
+      <div className="output-2">Part 2: <br /> {data ? (day.part2 ? String(day.part2(data)).split("\n").map((item, key) => (
+            <span key={key}>
+              {item}
+              <br/>
+            </span>
+          )
+        ) : "No part 2 code") : "Missing input data"}</div>
     </div>
   );
 }
