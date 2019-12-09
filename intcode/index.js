@@ -12,7 +12,7 @@ module.exports = (ints, inputs) => {
 		if (command.command) {
 			index = command.command(ints, inputs, outputs, command.paramModes, index);
 		} else {
-			return;
+			return outputs;
 		}
 	}
 };
@@ -39,7 +39,7 @@ const multiply = (ints, _, __, paramModes, index) => {
 
 const input = (ints, inputs, _, __, index) => {
 	const saveIndex = Number(ints[++index]);
-	const input = inputs.pop();
+	const input = inputs.shift();
 	ints[saveIndex] = input;
 	return index + 1;
 };

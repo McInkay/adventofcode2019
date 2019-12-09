@@ -1,4 +1,4 @@
-const intCode = require("./intCode");
+const intCode = require("../intcode/");
 
 module.exports = (data) => {
 	const ints = data.split(",");
