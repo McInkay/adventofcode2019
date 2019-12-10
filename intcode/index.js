@@ -1,8 +1,10 @@
+let relativeBase = 0;
 
 module.exports = (ints, inputs) => {
 	const outputs = [];
 	let shouldExit = false;
 	let index = 0;
+	relativeBase = 0;
 	while (!shouldExit) {
 		const commandInt = ints[index];
 		if (commandInt === "99") {
@@ -17,46 +19,70 @@ module.exports = (ints, inputs) => {
 	}
 };
 
+const getParam = (paramMode, param, ints) => {
+	switch(paramMode) {
+		case 0:
+			return Number(ints[param]) || 0;
+		case 1:
+			return param;
+		case 2:
+			return Number(ints[relativeBase + param]) || 0;
+	}
+}
+
+const getWriteParam = (paramMode, param) => {
+	switch(paramMode) {
+		case 0:
+		case 1:
+			return param;
+		case 2:
+			return relativeBase + param;
+	}
+}
+
 const add = (ints, _, __, paramModes, index) => {
 	const start = Number(ints[++index]);
 	const end = Number(ints[++index]);
-	const position = Number(ints[++index]);
-	const param1 = paramModes[0] === 0 ? Number(ints[start]) : start;
-	const param2 = paramModes[1] === 0 ? Number(ints[end]) : end;
-	ints[position] = Number(param1) + Number(param2);
+	const rawLocation = Number(ints[++index]);
+	const location = getWriteParam(paramModes[2], rawLocation);
+	const param1 = getParam(paramModes[0], start, ints);
+	const param2 = getParam(paramModes[1], end, ints);
+	ints[location] = Number(param1) + Number(param2);
 	return index + 1;
 };
 
 const multiply = (ints, _, __, paramModes, index) => {
 	const start = Number(ints[++index]);
 	const end = Number(ints[++index]);
-	const position = Number(ints[++index]);
-	const param1 = paramModes[0] === 0 ? Number(ints[start]) : start;
-	const param2 = paramModes[1] === 0 ? Number(ints[end]) : end;
-	ints[position] = Number(param1) * Number(param2);
+	const rawLocation = Number(ints[++index]);
+	const location = getWriteParam(paramModes[2], rawLocation);
+	const param1 = getParam(paramModes[0], start, ints);
+	const param2 = getParam(paramModes[1], end, ints);
+	ints[location] = Number(param1) * Number(param2);
 	return index + 1;
 };
 
-const input = (ints, inputs, _, __, index) => {
+const input = (ints, inputs, _, paramModes, index) => {
 	const saveIndex = Number(ints[++index]);
+	const toSave = getWriteParam(paramModes[0], saveIndex);
 	const input = inputs.shift();
-	ints[saveIndex] = input;
+	ints[toSave] = input;
 	return index + 1;
 };
 
 const output = (ints, _, outputs, paramModes, index) => {
 	const readIndex = Number(ints[++index]);
-	const toOutput = paramModes[0] === 0 ? ints[readIndex] : readIndex;
+	const toOutput = getParam(paramModes[0], readIndex, ints);
 	outputs.push(toOutput);
 	return index + 1;
 }
 
 const jumpTrue = (ints, inputs, outputs, paramModes, index) => {
 	const checker = Number(ints[++index]);
-	const shouldJump = paramModes[0] === 0 ? Number(ints[checker]) !== 0 : checker !== 0;
+	const shouldJump = getParam(paramModes[0], checker, ints) !== 0;
 	if (shouldJump) {
 		const newIndexIndex = Number(ints[++index]);
-		const newIndex = paramModes[1] === 0 ? Number(ints[newIndexIndex]) : newIndexIndex;
+		const newIndex = getParam(paramModes[1], newIndexIndex, ints);
 		return newIndex;
 	}
 	
@@ -65,10 +91,10 @@ const jumpTrue = (ints, inputs, outputs, paramModes, index) => {
 
 const jumpFalse = (ints, inputs, outputs, paramModes, index) => {
 	const checker = Number(ints[++index]);
-	const shouldJump = paramModes[0] === 0 ? Number(ints[checker]) === 0 : checker === 0;
+	const shouldJump = getParam(paramModes[0], checker, ints) === 0;
 	if (shouldJump) {
 		const newIndexIndex = Number(ints[++index]);
-		const newIndex = paramModes[1] === 0 ? Number(ints[newIndexIndex]) : newIndexIndex;
+		const newIndex = getParam(paramModes[1], newIndexIndex, ints);
 		return newIndex;
 	}
 	
@@ -78,9 +104,10 @@ const jumpFalse = (ints, inputs, outputs, paramModes, index) => {
 const lessThan = (ints, inputs, outputs, paramModes, index) => {
 	const firstIndex = Number(ints[++index]);
 	const secondIndex = Number(ints[++index]);
-	const first = paramModes[0] === 0 ? Number(ints[firstIndex]) : firstIndex;
-	const second = paramModes[1] === 0 ? Number(ints[secondIndex]) : secondIndex;
-	const location = Number(ints[++index]);
+	const first = getParam(paramModes[0], firstIndex, ints);
+	const second = getParam(paramModes[1], secondIndex, ints);
+	const rawLocation = Number(ints[++index]);
+	const location = getWriteParam(paramModes[2], rawLocation);
 	const toStore = first < second ? 1 : 0;
 	ints[location] = toStore;
 	return index + 1;
@@ -89,11 +116,18 @@ const lessThan = (ints, inputs, outputs, paramModes, index) => {
 const equals = (ints, inputs, outputs, paramModes, index) => {
 	const firstIndex = Number(ints[++index]);
 	const secondIndex = Number(ints[++index]);
-	const first = paramModes[0] === 0 ? Number(ints[firstIndex]) : firstIndex;
-	const second = paramModes[1] === 0 ? Number(ints[secondIndex]) : secondIndex;
-	const location = Number(ints[++index]);
+	const first = getParam(paramModes[0], firstIndex, ints);
+	const second = getParam(paramModes[1], secondIndex, ints);
+	const rawLocation = Number(ints[++index]);
+	const location = getWriteParam(paramModes[2], rawLocation);
 	const toStore = first === second ? 1 : 0;
 	ints[location] = toStore;
+	return index + 1;
+}
+
+const setRelativeBase = (ints, inputs, outputs, paramModes, index) => {
+	const param = Number(ints[++index]);
+	relativeBase += getParam(paramModes[0], param, ints);
 	return index + 1;
 }
 
@@ -106,6 +140,7 @@ const commands = {
 	6: jumpFalse,
 	7: lessThan,
 	8: equals,
+	9: setRelativeBase,
 }
 
 const getCommand = (commandString) => {
